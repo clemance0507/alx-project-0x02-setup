@@ -46,7 +46,7 @@ export default function HomePage() {
       <PostModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={handleAddPost}
+        onSave={({ title, content }) => handleAddPost(title, content)}
       />
     </div>
   );

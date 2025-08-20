@@ -1,25 +1,21 @@
 import React, { useState } from "react";
+import { type PostModalProps } from "@/interfaces";
 
-interface PostModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (title: string, content: string) => void;
-}
-
-const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, onSubmit }) => {
+const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, onSave }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !content) return;
-    onSubmit(title, content); // pass data back to parent
+
+    onSave({ title, content }); // ✅ matches interfaces/index.ts
     setTitle("");
     setContent("");
-    onClose(); // close modal after submit
+    onClose();
   };
 
-  if (!isOpen) return null; // modal is hidden
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -58,5 +54,6 @@ const PostModal: React.FC<PostModalProps> = ({ isOpen, onClose, onSubmit }) => {
       </div>
     </div>
   );
-  };
+};
+
 export default PostModal;

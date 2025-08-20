@@ -8,3 +8,8 @@ export interface ButtonProps {
   shape?: "rounded-sm" | "rounded-md" | "rounded-full";
   onClick?: () => void;
 }
+export interface PostModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (newPost: { title: string; content: string }) => void;
+}
