@@ -1,42 +1,46 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import PostCard from "@/components/common/PostCard";
 import Header from "@/components/layout/Header";
-import PostModal from "@/components/common/PostModal";
-import Card from "@/components/common/Card";
+import { PostProps } from "@/interfaces";
 
 export default function PostsPage() {
-  const [posts, setPosts] = useState<{ title: string; content: string }[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [posts, setPosts] = useState<PostProps[]>([]);
 
-  const handleAddPost = (newPost: { title: string; content: string }) => {
-    setPosts([...posts, newPost]);
-    setIsModalOpen(false);
-  };
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+      const data = await res.json();
+
+      // map API fields to PostProps
+      const formattedPosts: PostProps[] = data.slice(0, 10).map((post: any) => ({
+        title: post.title,
+        content: post.body,
+        userId: post.userId,
+      }));
+
+      setPosts(formattedPosts);
+    };
+
+    fetchPosts();
+  }, []);
 
   return (
     <div>
       <Header />
-      <main className="flex flex-col items-center justify-center min-h-screen bg-purple-100 p-4">
-        <h1 className="text-4xl font-bold text-purple-800 mb-8">Posts Page 📝</h1>
+      <main className="flex flex-col items-center min-h-screen bg-gray-100 p-6">
+        <h1 className="text-3xl font-bold text-blue-800 mb-6">Posts Page 📝</h1>
 
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"
-        >
-          Add New Post
-        </button>
-
-        <div className="mt-8 flex flex-wrap justify-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {posts.map((post, index) => (
-            <Card key={index} title={post.title} content={post.content} />
+            <PostCard
+              key={index}
+              title={post.title}
+              content={post.content}
+              userId={post.userId}
+            />
           ))}
         </div>
       </main>
-
-      <PostModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleAddPost}
-      />
     </div>
   );
 }
